@@ -26,8 +26,8 @@ Script de deploiement d'une infra Nextcloud
 """
 parser = argparse.ArgumentParser(description=description)
 parser.add_argument('config', help='Fichier de config YAML', type=str)
-parser.add_argument('-t', '--test', help='Dry run', action='store_true')
 parser.add_argument('-p', '--printcmd', help='Print les commandes cobbler et virt-install', action='store_true')
+parser.add_argument('--user', help="Utilisateur pour se connecter a l'hyperviseur", type=str)
 parser.add_argument('--socler', help='Socler les machines', action='store_true')
 parser.add_argument('--force', help='Supprime les entrees si elles existent', action='store_true')
 parser.add_argument('--nics', help='Ajoute les cartes reseaux supplementaires', action='store_true')
@@ -92,7 +92,7 @@ class Machine:
 	# Rajoute les cartes reseaux supplementaires
 	# si necessaire
 	def addNetworkCard(self, network):
-		conn = libvirt.open('qemu+ssh://pse32@192.168.1.1/system')
+		conn = libvirt.open('qemu+ssh://'+args.user+'@192.168.1.1/system')
 		xml_device = """
 			<interface type='network'>
 				<source network='"""+network+"""' />
@@ -104,18 +104,18 @@ class Machine:
 
 	# Destroy the VM
 	def deleteVm(self):
-		conn = libvirt.open('qemu+ssh://pse32@192.168.1.1/system')
+		conn = libvirt.open('qemu+ssh://'+args.user+'@192.168.1.1/system')
 		#conn.lookupByName(self.name).destroy()
 		#conn.lookupByName(self.name).undefine()
 
 
 	# Create the VM
 	def createVm(self):
-		executeRemoteCommand('192.168.122.1','pse32', self.getVirtInstallCmd())
+		executeRemoteCommand('192.168.122.1',args.user, self.getVirtInstallCmd())
 		# Verifie qu'elle est bien demarree, sinon on recommence
 		time.sleep(2)
 		if self.name not in getVmListe():
-			executeRemoteCommand('192.168.122.1','pse32', self.getVirtInstallCmd())	
+			executeRemoteCommand('192.168.122.1',args.user, self.getVirtInstallCmd())	
 			time.sleep(2)
 
 
@@ -197,7 +197,7 @@ def checkPrerequisDeploiement():
 # Donne les liste des VMs existantes sur l'hyperviseur
 def getVmListe():
 	liste = []
-	conn = libvirt.open('qemu+ssh://pse32@192.168.1.1/system')
+	conn = libvirt.open('qemu+ssh://'+args.user+'@192.168.1.1/system')
 	for dom in conn.listAllDomains():
 		liste.append(dom.name())	
 	return liste
