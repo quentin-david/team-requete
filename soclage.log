@@ -1,0 +1,506 @@
+test
+test
+test
+test
+test
+test
+test
+test
+paramiko(stdin) : <paramiko.ChannelFile from <paramiko.Channel 0 (open) window=2097152 -> <paramiko.Transport at 0x149f1d0L (cipher aes128-ctr, 128 bits) (active; 1 open channel(s))>>>
+paramiko(stdout) : <paramiko.ChannelFile from <paramiko.Channel 0 (open) window=2097152 -> <paramiko.Transport at 0x149f1d0L (cipher aes128-ctr, 128 bits) (active; 1 open channel(s))>>>
+paramiko(stderr) : <paramiko.ChannelFile from <paramiko.Channel 0 (open) window=2097152 -> <paramiko.Transport at 0x149f1d0L (cipher aes128-ctr, 128 bits) (active; 1 open channel(s))>>>
+test
+paramiko(stdin) : <paramiko.ChannelFile from <paramiko.Channel 0 (open) window=2097152 -> <paramiko.Transport at 0x1da31d0L (cipher aes128-ctr, 128 bits) (active; 1 open channel(s))>>>
+paramiko(stdout) : <paramiko.ChannelFile from <paramiko.Channel 0 (open) window=2097152 -> <paramiko.Transport at 0x1da31d0L (cipher aes128-ctr, 128 bits) (active; 1 open channel(s))>>>
+paramiko(stderr) : <paramiko.ChannelFile from <paramiko.Channel 0 (open) window=2097152 -> <paramiko.Transport at 0x1da31d0L (cipher aes128-ctr, 128 bits) (active; 1 open channel(s))>>>
+test
+paramiko(stdin) : <paramiko.ChannelFile from <paramiko.Channel 0 (open) window=2097152 -> <paramiko.Transport at 0xffc1d0L (cipher aes128-ctr, 128 bits) (active; 1 open channel(s))>>>
+paramiko(stdout) : <paramiko.ChannelFile from <paramiko.Channel 0 (open) window=2097152 -> <paramiko.Transport at 0xffc1d0L (cipher aes128-ctr, 128 bits) (active; 1 open channel(s))>>>
+paramiko(stderr) : <paramiko.ChannelFile from <paramiko.Channel 0 (open) window=2097152 -> <paramiko.Transport at 0xffc1d0L (cipher aes128-ctr, 128 bits) (active; 1 open channel(s))>>>
+test
+test
+test
+test
+paramiko(stdin) : <paramiko.ChannelFile from <paramiko.Channel 0 (open) window=2097152 -> <paramiko.Transport at 0x127d210L (cipher aes128-ctr, 128 bits) (active; 1 open channel(s))>>>
+paramiko(stdout) : <paramiko.ChannelFile from <paramiko.Channel 0 (open) window=2097152 -> <paramiko.Transport at 0x127d210L (cipher aes128-ctr, 128 bits) (active; 1 open channel(s))>>>
+paramiko(stderr) : <paramiko.ChannelFile from <paramiko.Channel 0 (open) window=2097152 -> <paramiko.Transport at 0x127d210L (cipher aes128-ctr, 128 bits) (active; 1 open channel(s))>>>
+test
+paramiko(stdin) : <paramiko.ChannelFile from <paramiko.Channel 0 (open) window=2097152 -> <paramiko.Transport at 0x13fb210L (cipher aes128-ctr, 128 bits) (active; 1 open channel(s))>>>
+paramiko(stdout) : <paramiko.ChannelFile from <paramiko.Channel 0 (open) window=2097152 -> <paramiko.Transport at 0x13fb210L (cipher aes128-ctr, 128 bits) (active; 1 open channel(s))>>>
+paramiko(stderr) : <paramiko.ChannelFile from <paramiko.Channel 0 (open) window=2097152 -> <paramiko.Transport at 0x13fb210L (cipher aes128-ctr, 128 bits) (active; 1 open channel(s))>>>
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase
+Attente du reboot et rajout des cartes reseaux...
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase
+Attente du reboot et rajout des cartes reseaux...
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test de vie de dummy
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+.
+Test (2) de vie de dummy
+.
+Test (3) de vie de dummy
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Premiere phase du soclage
+machine : dummy
+Enregistrement dans Cobbler
+Ajout de la VM
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Test (2) de vie de dummy
+Test (3) de vie de dummy
+Test (4) de vie de dummy
+Test (5) de vie de dummy
+Test (6) de vie de dummy
+Test (7) de vie de dummy
+Test (8) de vie de dummy
+Premiere phase du soclage
+machine : dummy
+Enregistrement dans Cobbler
+Ajout de la VM
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Test (2) de vie de dummy
+Test (3) de vie de dummy
+Test (4) de vie de dummy
+Test (5) de vie de dummy
+Test (6) de vie de dummy
+Test (7) de vie de dummy
+Test (8) de vie de dummy
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Test (2) de vie de dummy
+Test (3) de vie de dummy
+Premiere phase du soclage
+machine : dummy
+Enregistrement dans Cobbler
+Ajout de la VM
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Test (2) de vie de dummy
+Test (3) de vie de dummy
+Test (4) de vie de dummy
+Test (5) de vie de dummy
+Premiere phase du soclage
+machine : dummy
+Enregistrement dans Cobbler
+Ajout de la VM
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Test (2) de vie de dummy
+Test (3) de vie de dummy
+Test (4) de vie de dummy
+Test (5) de vie de dummy
+Test (6) de vie de dummy
+Test (7) de vie de dummy
+Test (8) de vie de dummy
+Test (9) de vie de dummy
+Premiere phase du soclage
+Premiere phase du soclage
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Premiere phase du soclage
+Premiere phase du soclage
+Premiere phase du soclage
+machine : dummy
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Premiere phase du soclage
+machine : dummy
+Troisieme phase (Ansible)
+todo
+Premiere phase du soclage
+machine : dummy
+Troisieme phase (Ansible)
+todo
+Premiere phase du soclage
+machine : dummy
+cobbler system add --name=dummy --hostname=dummy  --profile=ubuntu_server-x86_64 --interface=ens3 --ip-address=192.168.122.200 --subnet=255.255.255.0 --mac=52:54:00:12:e9:61 --gateway=192.168.122.1
+virt-install --name=dummy --ram=512 --mac=52:54:00:12:e9:61 --vcpus=1 --disk path=/var/lib/libvirt/images/dummy.qcow,size=20 --virt-type kvm --network network=default --pxe
+Premiere phase du soclage
+machine : dummy
+Premiere phase du soclage
+machine : dummy
+Premiere phase du soclage
+machine : dummy
+Premiere phase du soclage
+machine : dummy
+Bienvenue sur l'assistant de soclage Nextcloud
+Executer le script 1
+Bienvenue sur l'assistant de soclage Nextcloud
+ Prerequis invalide !
+	 Executer d'abord le script 1-config_cobbler.sh
+Bienvenue sur l'assistant de soclage Nextcloud
+	 Machine : dummy
+Bienvenue sur l'assistant de soclage Nextcloud
+	 Machine : dummy
+Bienvenue sur l'assistant de soclage Nextcloud
+	 Machine : dummy
+cobbler system add --name=dummy --hostname=dummy  --profile=ubuntu_server-x86_64 --interface=ens3 --ip-address=192.168.122.200 --subnet=255.255.255.0 --mac=52:54:00:12:e9:61 --gateway=192.168.122.1
+virt-install --name=dummy --ram=512 --mac=52:54:00:12:e9:61 --vcpus=1 --disk path=/var/lib/libvirt/images/dummy.qcow,size=20 --virt-type kvm --network network=default --pxe
+Bienvenue sur l'assistant de soclage Nextcloud
+ Prerequis invalide !
+	 Executer d'abord le script 1-config_cobbler.sh
+	 Prerequis OK
+	 Machine : dummy
+Bienvenue sur l'assistant de soclage Nextcloud
+ Prerequis invalide !
+	 Executer d'abord le script 1-config_cobbler.sh
+	 Prerequis OK
+	 Machine : dummy
+Bienvenue sur l'assistant de soclage Nextcloud
+	 Machine : dummy
+Bienvenue sur l'assistant de soclage Nextcloud
+	 Machine : dummy
+Enregistrement dans Cobbler
+Entree deja existante dans Cobbler
+	 utiliser l'option --force pour l'ecraser
+Bienvenue sur l'assistant de soclage Nextcloud
+	 Machine : dummy
+Enregistrement dans Cobbler
+Entree deja existante dans Cobbler
+	 utiliser l'option --force pour l'ecraser
+VM deja existante !
+Bienvenue sur l'assistant de soclage Nextcloud
+	 Machine : dummy
+Bienvenue sur l'assistant de soclage Nextcloud
+Bienvenue sur l'assistant de soclage Nextcloud
+	 Machine : dummy
+Bienvenue sur l'assistant de soclage Nextcloud
+	 Machine : dummy
+Bienvenue sur l'assistant de soclage Nextcloud
+Bienvenue sur l'assistant de soclage Nextcloud
+Bienvenue sur l'assistant de soclage Nextcloud
+Bienvenue sur l'assistant de soclage Nextcloud
+Bienvenue sur l'assistant de soclage Nextcloud
+Bienvenue sur l'assistant de soclage Nextcloud
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree deja existante dans Cobbler
+	 utiliser l'option --force pour l'ecraser
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Bienvenue sur l'assistant de soclage Nextcloud
+ Prerequis invalide !
+	 Executer d'abord le script 1-config_cobbler.sh
+	 Prerequis OK
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree deja existante dans Cobbler
+	 utiliser l'option --force pour l'ecraser
+Ajout de la VM
+Enregistrement dans Cobbler
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+VM deja existante -> Destuction
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+<libvirt.virConnect object at 0x277c690>
+Ajout de la VM
+<libvirt.virConnect object at 0x20dba10>
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+<libvirt.virConnect object at 0x20dba10>
+Ajout de la VM
+<libvirt.virConnect object at 0x2099110>
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+VM deja existante -> Destuction
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree deja existante dans Cobbler
+	 utiliser l'option --force pour l'ecraser
+Ajout de la VM
+Enregistrement dans Cobbler
+Entree deja existante dans Cobbler
+	 utiliser l'option --force pour l'ecraser
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree deja existante dans Cobbler
+	 utiliser l'option --force pour l'ecraser
+Ajout de la VM
+Enregistrement dans Cobbler
+Entree deja existante dans Cobbler
+	 utiliser l'option --force pour l'ecraser
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+VM deja existante -> Destuction
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Enregistrement dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Ajout de la VM
+Enregistrement dans Cobbler
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement dans Cobbler
+Ajout de la VM
+Enregistrement dans Cobbler
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Bienvenue sur l'assistant de soclage Nextcloud
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Bienvenue sur l'assistant de soclage Nextcloud
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+Bienvenue sur l'assistant de soclage Nextcloud
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+its alive !
+Bienvenue sur l'assistant de soclage Nextcloud
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+its alive !
+Bienvenue sur l'assistant de soclage Nextcloud
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+its alive !
+Test (1) de vie de dummy2
+its alive !
+fin de boucle
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement de dummy dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Enregistrement de dummy2 dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement de dummy dans Cobbler
+Entree existante dans Cobbler -> MAJ
+VM dummy deja existante
+Enregistrement de dummy2 dans Cobbler
+Entree existante dans Cobbler -> MAJ
+VM dummy2 deja existante
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement de dummy dans Cobbler
+Entree existante dans Cobbler -> MAJ
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement de dummy dans Cobbler
+Entree existante dans Cobbler -> MAJ
+VM dummy deja existante
+Enregistrement de dummy2 dans Cobbler
+Entree existante dans Cobbler -> MAJ
+VM dummy2 deja existante
+Bienvenue sur l'assistant de soclage Nextcloud
+Enregistrement de dummy dans Cobbler
+Entree existante dans Cobbler -> MAJ
+VM dummy deja existante
+Enregistrement de dummy2 dans Cobbler
+Entree existante dans Cobbler -> MAJ
+VM dummy2 deja existante
+Enregistrement de web01 dans Cobbler
+Ajout de la VM
+Bienvenue sur l'assistant de soclage Nextcloud
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+its alive !
+Bienvenue sur l'assistant de soclage Nextcloud
+Deuxieme phase (Rajout NIC)
+Attente du reboot et rajout des cartes reseaux...
+Test (1) de vie de dummy
+its alive !
+fin de boucle
+Test (1) de vie de dummy2
+its alive !
+fin de boucle
+Test (1) de vie de web01
+its alive !
+fin de boucle
+Bienvenue sur l'assistant de soclage Nextcloud
+Bienvenue sur l'assistant de soclage Nextcloud
+Bienvenue sur l'assistant de soclage Nextcloud
+Bienvenue sur l'assistant de soclage Nextcloud
