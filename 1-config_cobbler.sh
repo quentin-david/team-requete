@@ -40,6 +40,9 @@ cp ./templates/tftpd.template /etc/cobbler
 cp ./templates/dhcp.template /etc/cobbler
 sed -i s/"manage_dhcp: 0"/"manage_dhcp: 1"/g /etc/cobbler/settings
 sed -i s/"pxe_just_once: 0"/"pxe_just_once: 1"/g /etc/cobbler/settings
+COBBLER_IP=$(ip a | grep 192.168 | awk -P '{print $2}' | awk -F'/' '{print $1}')
+sed -i s/"next_server: 127.0.0.1"/"next_server: ${COBBLER_IP}"/g /etc/cobbler/settings
+sed -i s/"server: 127.0.0.1"/"server: ${COBBLER_IP}"/g /etc/cobbler/settings
 
 
 # Lancement des services
