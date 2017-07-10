@@ -44,6 +44,7 @@ COBBLER_IP=$(ip a | grep 192.168 | awk -P '{print $2}' | awk -F'/' '{print $1}')
 sed -i s/"next_server: 127.0.0.1"/"next_server: ${COBBLER_IP}"/g /etc/cobbler/settings
 sed -i s/"server: 127.0.0.1"/"server: ${COBBLER_IP}"/g /etc/cobbler/settings
 
+cobbler sync >/dev/null 2>&1
 
 # Lancement des services
 systemctl enable cobblerd
@@ -60,9 +61,14 @@ systemctl start tftp
 
 # Donnees Cobbler
 cp ./templates/sample_perso.seed /var/lib/cobbler/kickstarts/
+umount /media
 mount -o loop /var/tmp/ubuntu-16.04.2-server-amd64.iso /media
-cobbler import --path=/media/ --name=ubuntu_server-x86_64
-cobbler profile add --name=ubuntu_server-x86_64 --distro=ubuntu_server-x86_64 --kickstart=/var/lib/cobbler/kickstarts/sample_perso.seed
+if [[ $(cobbler distro list | grep ubuntu_server-x86_64 | wc -l) -eq 0 ]]; then
+	cobbler import --path=/media/ --name=ubuntu_server-x86_64
+fi
+if [[ $(cobbler profile list | grep ubuntu_server-x86_64 | wc -l) -eq 0 ]]; then
+	cobbler profile add --name=ubuntu_server-x86_64 --distro=ubuntu_server-x86_64 --kickstart=/var/lib/cobbler/kickstarts/sample_perso.seed
+fi
 cobbler sync
 
 # Creer flag
@@ -72,4 +78,6 @@ touch prerequis.flag
 
 # Installation des roles Ansible
 
+# URL cobbler web
+echo "https://${COBBLER_IP}/cobbler_web"
 
