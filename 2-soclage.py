@@ -226,6 +226,7 @@ for vm in plateforme.liste_machines:
 	# Soclage des machines
 	if args.socler:
 		machine.socler()
+		time.sleep(30)
 
 
 # Dans un deuxieme temps, rajout des cartes reseaux supplementaires
@@ -252,6 +253,7 @@ if args.nics:
 					machine.addNetworkCard('frontend')
 				if vm["ip_backend"]:
 					machine.addNetworkCard('backend')
+				time.sleep(5)
 		logger.info('fin de boucle')
 
 
