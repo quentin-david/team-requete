@@ -152,6 +152,7 @@ class Machine:
 		else:
 			logger.info('Ajout de la VM')
 			self.createVm()
+			time.sleep(30)
 		
 
 """
@@ -226,7 +227,6 @@ for vm in plateforme.liste_machines:
 	# Soclage des machines
 	if args.socler:
 		machine.socler()
-		time.sleep(30)
 
 
 # Dans un deuxieme temps, rajout des cartes reseaux supplementaires
