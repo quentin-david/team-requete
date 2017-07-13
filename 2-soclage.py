@@ -5,13 +5,13 @@ import argparse
 import paramiko
 import os
 import yaml
-import libvirt
+#import libvirt
 import time
 import socket
 import re
 
 # Constantes
-dieses = "###################################################"
+dieses = "###########################################################"
 
 # Parametrage du log
 logging.basicConfig(level=logging.INFO)
@@ -41,22 +41,36 @@ args = parser.parse_args()
 class Machine:
 	definition_roles = {'web-p': 'Web primaire', 'web-s': 'Web secondaire', 'bdd-p': 'BDD primaire', 'bdd-b': 'BDD backup', 'ha-p': 'HAProxy primaire', 'ha-s': 'HAProxy secondaire', 'ldap-p': 'LDAP primaire', 'ldap-b': 'LDAP backup'}
 	
-	def __init__(self,name,ip_admin,role,disk=20,ram=512,vcpu=1,ip_frontend=None,ip_backend=None):
+	def __init__(self,name,ip_admin,hyperviseur,role='small',disk=20,ip=None,profil='small',plateforme=None):
 		self.name = name
 		self.ip_admin = ip_admin
 		self.role = role
+		self.profil = plateforme.getProfil(profil)
 		self.mac_admin = self.getRandomMac()
 		self.disk = disk
-		self.ram = ram
-		self.vcpu = vcpu
-		self.ip_frontend = ip_frontend
-		self.ip_backend = ip_backend
+		self.hyperviseur = hyperviseur
+		self.ram = self.profil['ram']
+		self.vcpu = self.profil['cpu']
+		self.ip = ip		
+		self.plateforme = plateforme
+
+
+	def dump(self):
+		print('Machine {} - {}').format(self.name, self.definition_roles[self.role])
+		print('\t IP admin : {}, MAC : {}').format(self.ip_admin, self.mac_admin)
+		if self.ip:
+			print('\t IP interne : {}').format(self.ip)
+		print('\t Hyperviseur : {}').format(self.hyperviseur)
+		print('\t Profil VM : {}').format(self.profil)
+		print('\t RAM : {} Mo - CPU : {}').format(self.ram, self.vcpu)
+
 
 	# Random Mac adress
 	def getRandomMac(self):
 		return '52:54:00:{}:{}:{}'.format(*[os.urandom(1).encode('hex') for i in range(3)])
-		#return '52:54:00:12:e9:61'
 
+	
+	# Commande de creation d'une VM avec virt-install
 	def getVirtInstallCmd(self):
 		cmd = 'virt-install'
 		cmd += ' --name='+self.name
@@ -69,11 +83,8 @@ class Machine:
 		cmd += ' --pxe'	
 		return cmd
 
-	def getVirtInstallDelete(self):
-		cmd = 'virsh'
-		cmd += ''
-		return cmd
 
+	# Commande de creation/update d'un System dans Cobbler
 	def getCobblerAddCmd(self, edit=False):
 		if edit:
 			cmd = 'cobbler system edit'
@@ -81,7 +92,8 @@ class Machine:
 			cmd = 'cobbler system add'
 		cmd += ' --name='+self.name
 		cmd += ' --hostname='+self.name
-		cmd += '  --profile=ubuntu_server-x86_64'
+		#cmd += '  --profile=ubuntu_server-x86_64'
+		cmd += '  --profile='+self.plateforme["socle_profile"]
 		cmd += ' --interface=ens3'
 		cmd += ' --ip-address='+self.ip_admin
 		cmd += ' --subnet=255.255.255.0'
@@ -89,6 +101,12 @@ class Machine:
 		cmd += ' --static=1'
 		cmd += ' --gateway=192.168.122.1'
 		return cmd
+
+	# Verifie qu'une entree existe bien dans Cobbler
+	def checkCobblerSystemExist(self):
+		resultat_cmd = os.system('cobbler system report '+ self.name)
+		return resultat_cmd
+	
 
 	# Rajoute les cartes reseaux supplementaires
 	# si necessaire
@@ -118,34 +136,25 @@ class Machine:
 		if self.name not in getVmListe(hyperviseur):
 			executeRemoteCommand(hyperviseur, args.user, self.getVirtInstallCmd())	
 			time.sleep(2)
-
-
-	# Verification des parametres de la machine (existence du reseau, champs manquants, etc)
-	def checkParameters(self):
-		if self.name=='' or self.ip_admin=='':
-			return False
-		return True
-
-
-	def dump(self):
-		print('Machine {} - {}').format(self.name, self.definition_roles[self.role])
-		print('\t IP admin : {}, MAC : {}').format(self.ip_admin, self.mac_admin)
-		if self.ip_frontend:
-			print('\t IP frontend : {}').format(vm["ip_frontend"])
-		if self.ip_backend:
-			print('\t IP backend : {}').format(vm["ip_backend"])
 		
 
-	# Orchestration de la premiere phase (Cobbler, virt-install)
-	# Avec verification de l'existant
+	"""
+	 Orchestration de la premiere phase (Cobbler, virt-install)
+	 Avec verification de l'existant
+	"""
 	def socler(self, hyperviseur):
 		# Enregistrement dans Cobbler avec verification d'existence
 		logger.info('Enregistrement de '+self.name+' dans Cobbler')
-		if os.system(self.getCobblerAddCmd()) != 0:
+		#if os.system(self.getCobblerAddCmd()) != 0:
+			#logger.warn('Entree existante dans Cobbler -> MAJ')
+			#os.system(self.getCobblerAddCmd(edit=True)) # si le systeme existe deja on l'edite
+		if not self.checkCobblerSystemExist():
+			os.system(self.getCobblerAddCmd())
+		else:
 			logger.warn('Entree existante dans Cobbler -> MAJ')
-			os.system(self.getCobblerAddCmd(edit=True)) # si le systeme existe deja on l'edite
+		
 		os.system('cobbler sync >/dev/null 2>&1')
-		time.sleep(1)
+		time.sleep(10)
 		# Creation et boot de la VM  => soclage avec seulement la carte d'admin
 		# Verification de la presence de la VM
 		if self.name in getVmListe():
@@ -165,19 +174,23 @@ class Plateforme:
 	def __init__(self,config_file):
 		if os.path.isfile(config_file):
 			self.conf_map = yaml.load(open(config_file))
-			if self.conf_map["hyperviseur"] == None or self.conf_map["liste_machines"] == None:
+			if self.conf_map["liste_machines"] == None:
 				logger.error('fichier parametre incomplet')
 				exit(4)
 			self.liste_machines = self.conf_map["liste_machines"]
+			self.liste_profils = self.conf_map["liste_profils"]
+			self.socle_profile = self.conf_map["socle_profile"]
 			self.date = self.conf_map["date"]
 		else:
 			self.liste_machines = None
 
 	def dump(self):
-		print(dieses+'\n\tDescription de la PF a deployer\n'+dieses)
+		print(dieses+'\n####\t  Description de la PF a deployer\n'+dieses)
 		for vm in self.liste_machines:
-			print('Serveur {} :').format(vm["name"])
-			print('\t IP admin : {}, role : {}').format(vm["ip_admin"], self.definition_roles[vm["role"]])
+			print('Serveur {} :'.format(vm["name"]))
+			print('\t IP admin : {}, role : {}'.format(vm["ip_admin"], self.definition_roles[vm["role"]]))
+			print('\t IP interne : {}'.format(vm["ip"]))
+			print('\t Profil VM : {}'.format(self.getProfil(vm["profil"])))
 		print(dieses)
 
 	# recupere les infos d'une machine a partir de son nom
@@ -185,6 +198,14 @@ class Plateforme:
 		for vm in self.liste_machines:
 			if vm["name"] == name:
 				return vm
+
+	# recupere le profil a partir de son nom
+	def getProfil(self, name):
+		for profil in self.liste_profils:
+			if profil["name"] == name:
+				return profil
+
+
 
 
 # Execution d'une commande par SSH
@@ -214,6 +235,8 @@ def getVmListe(hyperviseur):
 	for dom in conn.listAllDomains():
 		liste.append(dom.name())	
 	return liste
+
+
 	
 
 """
@@ -230,6 +253,7 @@ if not checkPrerequisDeploiement():
 plateforme = Plateforme(args.config) # Chargement de la conf YAML
 plateforme.dump()
 
+
 # si l'argument --machine est rempli on ne prend que cette machine
 if args.machine:
 	liste_machines = [plateforme.getMachine(args.machine)]
@@ -238,48 +262,23 @@ else:
 
 
 # Enregistrement dans Cobbler et creation de la VM
-# for vm in plateforme.liste_machines:
 for vm in liste_machines:
-	logger.debug('\t Machine : '+vm["name"])
 	# Creation des objets machine
-	machine = Machine(name=vm["name"], ip_admin=vm["ip_admin"], role=vm["role"], ip_frontend=vm["ip_frontend"], ip_backend=["ip_backend"]);
+	machine = Machine(name=vm["name"], ip_admin=vm["ip_admin"], hyperviseur=vm["hyperviseur"], disk=vm["disk"], role=vm["role"], ip=vm["ip"], profil=vm["profil"], plateforme=plateforme);
 	machine.dump()
+	
 	# Soclage des machines
 	if args.socler:
 		machine.socler(plateforme.hyperviseur)
 
+	# Rajout de la carte reseau
+	if args.nics:
+		if vm["ip"]:
+			logger.info('Deuxieme phase (Rajout NIC)')
+			machine.addNetworkCard('frontend', plateforme.hyperviseur)
 
-# Dans un deuxieme temps, rajout des cartes reseaux supplementaires
-if args.nics:
-	logger.info('Deuxieme phase (Rajout NIC)')
-	logger.info('Attente du reboot et rajout des cartes reseaux...')
-	#for vm in plateforme.liste_machines:
-	for vm in liste_machines:
-		machine=Machine(name=vm["name"], ip_admin=vm["ip_admin"], role=vm["role"], ip_frontend=vm["ip_frontend"], ip_backend=["ip_backend"]);
-		reveille = 1
-		while(reveille != 0):
-			try:
-				logger.info('Test ('+str(reveille)+') de vie de '+vm["name"])
-				res = executeRemoteCommand(vm["ip_admin"], 'administrateur', 'uptime', 'ertyerty',5)
-			except socket.timeout:
-				res = None
-				pass
-			if res == None:
-				time.sleep(30)
-				reveille += 1
-			else:
-				reveille = 0
-				logger.info('its alive !')
-				if vm["ip_frontend"]:
-					machine.addNetworkCard('frontend', plateforme.hyperviseur)
-				if vm["ip_backend"]:
-					machine.addNetworkCard('backend', plateforme.hyperviseur)
-				time.sleep(5)
-		logger.info('fin de boucle')
-
-
-# Deploiement de la conf Ansible
-if args.ansible:
-	logger.info('Troisieme phase (Ansible)')
-	logger.info('todo')
+	# Deploiement de la conf Ansible
+	if args.ansible:
+		logger.info('Troisieme phase (Ansible)')
+		logger.info('todo')
 
