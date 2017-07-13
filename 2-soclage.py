@@ -28,6 +28,7 @@ parser = argparse.ArgumentParser(description=description)
 parser.add_argument('config', help='Fichier de config YAML', type=str)
 parser.add_argument('-p', '--printcmd', help='Print les commandes cobbler et virt-install', action='store_true')
 parser.add_argument('--user', help="Utilisateur pour se connecter a l'hyperviseur", type=str)
+parser.add_argument('--machine', help="Machine a resocler", type=str)
 parser.add_argument('--socler', help='Socler les machines', action='store_true')
 parser.add_argument('--force', help='Supprime les entrees si elles existent', action='store_true')
 parser.add_argument('--nics', help='Ajoute les cartes reseaux supplementaires', action='store_true')
@@ -91,8 +92,8 @@ class Machine:
 
 	# Rajoute les cartes reseaux supplementaires
 	# si necessaire
-	def addNetworkCard(self, network):
-		conn = libvirt.open('qemu+ssh://'+args.user+'@192.168.1.1/system')
+	def addNetworkCard(self, network, hyperviseur):
+		conn = libvirt.open('qemu+ssh://'+args.user+'@'+hyperviseur+'/system')
 		xml_device = """
 			<interface type='network'>
 				<source network='"""+network+"""' />
@@ -110,12 +111,12 @@ class Machine:
 
 
 	# Create the VM
-	def createVm(self):
-		executeRemoteCommand('192.168.122.1',args.user, self.getVirtInstallCmd())
+	def createVm(self, hyperviseur):
+		executeRemoteCommand(hyperviseur, args.user, self.getVirtInstallCmd())
 		# Verifie qu'elle est bien demarree, sinon on recommence
 		time.sleep(2)
-		if self.name not in getVmListe():
-			executeRemoteCommand('192.168.122.1',args.user, self.getVirtInstallCmd())	
+		if self.name not in getVmListe(hyperviseur):
+			executeRemoteCommand(hyperviseur, args.user, self.getVirtInstallCmd())	
 			time.sleep(2)
 
 
@@ -137,7 +138,7 @@ class Machine:
 
 	# Orchestration de la premiere phase (Cobbler, virt-install)
 	# Avec verification de l'existant
-	def socler(self):
+	def socler(self, hyperviseur):
 		# Enregistrement dans Cobbler avec verification d'existence
 		logger.info('Enregistrement de '+self.name+' dans Cobbler')
 		if os.system(self.getCobblerAddCmd()) != 0:
@@ -151,7 +152,7 @@ class Machine:
 			logger.info('VM '+self.name+' deja existante')
 		else:
 			logger.info('Ajout de la VM')
-			self.createVm()
+			self.createVm(hyperviseur)
 			time.sleep(30)
 		
 
@@ -160,19 +161,30 @@ class Machine:
 """
 class Plateforme:
 	definition_roles = {'web-p': 'Web primaire', 'web-s': 'Web secondaire', 'bdd-p': 'BDD primaire', 'bdd-b': 'BDD backup', 'ha-p': 'HAProxy primaire', 'ha-s': 'HAProxy secondaire', 'ldap-p': 'LDAP primaire', 'ldap-b': 'LDAP backup'}
+	
 	def __init__(self,config_file):
 		if os.path.isfile(config_file):
 			self.conf_map = yaml.load(open(config_file))
+			if self.conf_map["hyperviseur"] == None or self.conf_map["liste_machines"] == None:
+				logger.error('fichier parametre incomplet')
+				exit(4)
 			self.liste_machines = self.conf_map["liste_machines"]
 			self.date = self.conf_map["date"]
 		else:
 			self.liste_machines = None
+
 	def dump(self):
 		print(dieses+'\n\tDescription de la PF a deployer\n'+dieses)
 		for vm in self.liste_machines:
 			print('Serveur {} :').format(vm["name"])
 			print('\t IP admin : {}, role : {}').format(vm["ip_admin"], self.definition_roles[vm["role"]])
 		print(dieses)
+
+	# recupere les infos d'une machine a partir de son nom
+	def getMachine(self, name):
+		for vm in self.liste_machines:
+			if vm["name"] == name:
+				return vm
 
 
 # Execution d'une commande par SSH
@@ -196,9 +208,9 @@ def checkPrerequisDeploiement():
 
 
 # Donne les liste des VMs existantes sur l'hyperviseur
-def getVmListe():
+def getVmListe(hyperviseur):
 	liste = []
-	conn = libvirt.open('qemu+ssh://'+args.user+'@192.168.1.1/system')
+	conn = libvirt.open('qemu+ssh://'+args.user+'@'+hyperviseur+'/system')
 	for dom in conn.listAllDomains():
 		liste.append(dom.name())	
 	return liste
@@ -218,22 +230,31 @@ if not checkPrerequisDeploiement():
 plateforme = Plateforme(args.config) # Chargement de la conf YAML
 plateforme.dump()
 
+# si l'argument --machine est rempli on ne prend que cette machine
+if args.machine:
+	liste_machines = [plateforme.getMachine(args.machine)]
+else:
+	liste_machines = plateforme.liste_machines
+
+
 # Enregistrement dans Cobbler et creation de la VM
-for vm in plateforme.liste_machines:
+# for vm in plateforme.liste_machines:
+for vm in liste_machines:
 	logger.debug('\t Machine : '+vm["name"])
 	# Creation des objets machine
 	machine = Machine(name=vm["name"], ip_admin=vm["ip_admin"], role=vm["role"], ip_frontend=vm["ip_frontend"], ip_backend=["ip_backend"]);
 	machine.dump()
 	# Soclage des machines
 	if args.socler:
-		machine.socler()
+		machine.socler(plateforme.hyperviseur)
 
 
 # Dans un deuxieme temps, rajout des cartes reseaux supplementaires
 if args.nics:
 	logger.info('Deuxieme phase (Rajout NIC)')
 	logger.info('Attente du reboot et rajout des cartes reseaux...')
-	for vm in plateforme.liste_machines:
+	#for vm in plateforme.liste_machines:
+	for vm in liste_machines:
 		machine=Machine(name=vm["name"], ip_admin=vm["ip_admin"], role=vm["role"], ip_frontend=vm["ip_frontend"], ip_backend=["ip_backend"]);
 		reveille = 1
 		while(reveille != 0):
@@ -250,9 +271,9 @@ if args.nics:
 				reveille = 0
 				logger.info('its alive !')
 				if vm["ip_frontend"]:
-					machine.addNetworkCard('frontend')
+					machine.addNetworkCard('frontend', plateforme.hyperviseur)
 				if vm["ip_backend"]:
-					machine.addNetworkCard('backend')
+					machine.addNetworkCard('backend', plateforme.hyperviseur)
 				time.sleep(5)
 		logger.info('fin de boucle')
 
