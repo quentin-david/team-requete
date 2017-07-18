@@ -1,7 +1,5 @@
 #!/usr/bin/python
 
-################  Version 2 ###################
-
 import logging
 import argparse
 import paramiko
@@ -35,6 +33,7 @@ parser.add_argument('--machine', nargs='?', help="Machine a resocler", type=str)
 parser.add_argument('--socler', help='Socler les machines', action='store_true')
 parser.add_argument('--check', help='Verifier les machines', action='store_true')
 parser.add_argument('--force', help='Supprime les entrees si elles existent', action='store_true')
+parser.add_argument('--nics', help='Ajoute les cartes reseaux supplementaires', action='store_true')
 parser.add_argument('--ansible', help='Deroule la configuration Ansible', action='store_true')
 args = parser.parse_args()
 
@@ -42,26 +41,28 @@ args = parser.parse_args()
   Description des machines
 """
 class Machine:
-	definition_roles = {'web-p': 'Web primaire', 'web-s': 'Web secondaire', 'bdd-p': 'BDD primaire', 'bdd-b': 'BDD backup', 'ha-p': 'HAProxy primaire', 'ha-s': 'HAProxy secondaire', 'ldap-p': 'LDAP primaire', 'ldap-b': 'LDAP backup', 'nfs-p': 'NFS primaire'}
+	definition_roles = {'web-p': 'Web primaire', 'web-s': 'Web secondaire', 'bdd-p': 'BDD primaire', 'bdd-b': 'BDD backup', 'ha-p': 'HAProxy primaire', 'ha-s': 'HAProxy secondaire', 'ldap-p': 'LDAP primaire', 'ldap-b': 'LDAP backup'}
 	
-	def __init__(self, name, ip, hyperviseur, role='small',disk=20,profil='small',plateforme=None, bridge=None):
+	def __init__(self,name,ip_admin,hyperviseur,role='small',disk=20,ip=None,profil='small',plateforme=None):
 		self.name = name
+		self.ip_admin = ip_admin
 		self.role = role
 		self.profil = plateforme.getProfil(profil)
-		self.mac = self.getRandomMac()
+		self.mac_admin = self.getRandomMac()
 		self.disk = disk
 		self.hyperviseur = hyperviseur
 		self.ram = self.profil['ram']
 		self.vcpu = self.profil['cpu']
 		self.ip = ip		
 		self.plateforme = plateforme
-		self.bridge = bridge
 
 
 	def dump(self):
 		print('Machine {} - {}').format(self.name, self.definition_roles[self.role])
-		print('\t IP : {}, MAC : {}').format(self.ip, self.mac)
-		print('\t Hyperviseur : {}, bridge: {}').format(self.hyperviseur, self.bridge)
+		print('\t IP admin : {}, MAC : {}').format(self.ip_admin, self.mac_admin)
+		if self.ip:
+			print('\t IP interne : {}').format(self.ip)
+		print('\t Hyperviseur : {}').format(self.hyperviseur)
 		print('\t Profil VM : {}').format(self.profil)
 		print('\t RAM : {} Mo - CPU : {}').format(self.ram, self.vcpu)
 
@@ -76,16 +77,12 @@ class Machine:
 		cmd = 'virt-install'
 		cmd += ' --name='+self.name
 		cmd += ' --ram='+str(self.ram)
-		cmd += ' --mac='+self.mac
+		cmd += ' --mac='+self.mac_admin
 		cmd += ' --vcpus='+str(self.vcpu)
-		cmd += ' --disk path=/var/lib/libvirt/images/'+self.name+'.qcow2,size='+str(self.disk)
+		cmd += ' --disk path=/var/lib/libvirt/images/'+self.name+'.qcow,size='+str(self.disk)
 		cmd += ' --virt-type kvm'
-		cmd += ' --network type=direct,source='+self.bridge+',source_mode=bridge'
-		#cmd += ' --events on_poweroff=destroy,on_reboot=restart,on_crash=restart'
-		#cmd += ' --events on_reboot=restart'
-		cmd += ' --wait=-1'
-		cmd += ' --noautoconsole'
-		cmd += ' --pxe'
+		cmd += ' --network network=default'
+		cmd += ' --pxe'	
 		return cmd
 
 	# Verifie qu'une VM existe bien dans Libvirt
@@ -103,13 +100,14 @@ class Machine:
 			cmd = 'cobbler system add'
 		cmd += ' --name='+self.name
 		cmd += ' --hostname='+self.name
-		cmd += ' --profile='+self.plateforme.socle_profile
+		#cmd += '  --profile=ubuntu_server-x86_64'
+		cmd += '  --profile='+self.plateforme["socle_profile"]
 		cmd += ' --interface=ens3'
-		cmd += ' --ip-address='+self.ip
+		cmd += ' --ip-address='+self.ip_admin
 		cmd += ' --subnet=255.255.255.0'
-		cmd += ' --mac='+self.mac
+		cmd += ' --mac='+self.mac_admin
 		cmd += ' --static=1'
-		cmd += ' --gateway=192.168.200.10'
+		cmd += ' --gateway=192.168.122.1'
 		return cmd
 
 	# Verifie qu'une entree existe bien dans Cobbler
@@ -124,6 +122,26 @@ class Machine:
 			print('error')	
 
 
+	# Rajoute les cartes reseaux supplementaires
+	# si necessaire
+	def addNetworkCard(self, network):
+		conn = libvirt.open('qemu+ssh://'+args.user+'@'+self.hyperviseur+'/system')
+		
+		# Recupere l'adresse MAC de la carte reseau-USB
+		mac_address = executeRemoteCommand(self.hyperviseur, args.user, "ip l | grep -A 1 macvtap | grep link | awk  '{print $2}'")
+		xml_device = """ 
+                <interface type='direct'>
+		      <mac address='"""+mac_address[0]+"""'/>
+		      <source dev='usb-BFAE53' mode='bridge'/>
+		      <target dev='macvtap0'/>
+		      <model type='rtl8139'/>
+		      <alias name='net1'/>
+		      <address type='pci' domain='0x0000' bus='0x00' slot='0x08' function='0x0'/>
+		</interface>
+		"""
+		#if not re.search("source network='"+network+"'", conn.lookupByName(self.name).XMLDesc()):
+		if not re.search("interface type='direct'", conn.lookupByName(self.name).XMLDesc()):
+			conn.lookupByName(self.name).attachDevice(xml_device)
 
 	# Destroy the VM
 	def deleteVm(self):
@@ -189,7 +207,7 @@ class Machine:
  Description de la plateforme depuis un fichier YAML
 """
 class Plateforme:
-	definition_roles = {'web-p': 'Web primaire', 'web-s': 'Web secondaire', 'bdd-p': 'BDD primaire', 'bdd-b': 'BDD backup', 'ha-p': 'HAProxy primaire', 'ha-s': 'HAProxy secondaire', 'ldap-p': 'LDAP primaire', 'ldap-b': 'LDAP backup', 'nfs-p': 'NFS primaire'}
+	definition_roles = {'web-p': 'Web primaire', 'web-s': 'Web secondaire', 'bdd-p': 'BDD primaire', 'bdd-b': 'BDD backup', 'ha-p': 'HAProxy primaire', 'ha-s': 'HAProxy secondaire', 'ldap-p': 'LDAP primaire', 'ldap-b': 'LDAP backup'}
 	
 	def __init__(self,config_file):
 		if os.path.isfile(config_file):
@@ -208,7 +226,7 @@ class Plateforme:
 		print(dieses+'\n####\t  Description de la PF a deployer\n'+dieses)
 		for vm in self.liste_machines:
 			print('Serveur {} :'.format(vm["name"]))
-			print('\t IP : {}, role : {}'.format(vm["ip"], self.definition_roles[vm["role"]]))
+			print('\t IP admin : {}, role : {}'.format(vm["ip_admin"], self.definition_roles[vm["role"]]))
 			print('\t IP interne : {}'.format(vm["ip"]))
 			print('\t Profil VM : {}'.format(self.getProfil(vm["profil"])))
 		print(dieses)
@@ -249,17 +267,27 @@ def checkPrerequisDeploiement():
 	return os.path.isfile('prerequis.flag')
 
 
+"""
+# Donne les liste des VMs existantes sur l'hyperviseur
+def getVmListe(hyperviseur):
+	liste = []
+	conn = libvirt.open('qemu+ssh://'+args.user+'@'+hyperviseur+'/system')
+	for dom in conn.listAllDomains():
+		liste.append(dom.name())	
+	return liste
+"""
 
 	
 
-#######################    MAIN     ###############################
+"""
+ #######################    MAIN     ###############################
+"""
 logger.info("Bienvenue sur l'assistant de soclage Nextcloud")
-
 
 # Verification des prerequis du serveur de deploiement
 if not checkPrerequisDeploiement():
 	logger.warn(" Prerequis invalide !\n\t Executer d'abord le script 1-config_cobbler.sh")
-	#os.system('./1-config_cobbler.sh')
+	os.system('./1-config_cobbler.sh')
 	logger.info("\t Prerequis OK")
 
 plateforme = Plateforme(args.config) # Chargement de la conf YAML
@@ -284,7 +312,7 @@ else:
 # Enregistrement dans Cobbler et creation de la VM
 for vm in liste_machines:
 	# Creation des objets machine
-	machine = Machine(name=vm["name"], ip=vm["ip"], hyperviseur=vm["hyperviseur"], disk=vm["disk"], role=vm["role"], profil=vm["profil"], plateforme=plateforme, bridge=vm["bridge"]);
+	machine = Machine(name=vm["name"], ip_admin=vm["ip_admin"], hyperviseur=vm["hyperviseur"], disk=vm["disk"], role=vm["role"], ip=vm["ip"], profil=vm["profil"], plateforme=plateforme);
 	machine.dump()
 	
 	# Verification de la machine
@@ -295,6 +323,11 @@ for vm in liste_machines:
 	if args.socler:
 		machine.socler()
 
+	# Rajout de la carte reseau
+	if args.nics:
+		if vm["ip"]:
+			logger.info('Deuxieme phase (Rajout NIC)')
+			machine.addNetworkCard('frontend')
 
 	# Deploiement de la conf Ansible
 	if args.ansible:

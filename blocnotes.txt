@@ -2,4 +2,4 @@
 ansible all -m ping -u administrateur -b --ask-pass --ask-become-pass -e 'ansible_python_interpreter=/usr/bin/python3'
 
 # Commande pour lancer la synchro
-ansible-playbook site.yml --ask-pass --ask-become-pass -e 'ansible_python_interpreter=/usr/bin/python3'
+ansible-playbook /etc/ansible/site.yml --ask-pass --ask-become-pass -e 'ansible_python_interpreter=/usr/bin/python3'
