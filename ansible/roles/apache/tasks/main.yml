@@ -1,0 +1,72 @@
+---
+
+- name: Install php7, Apache and modules
+  become: yes
+  become_method: sudo
+  apt: name={{ item }} state=present
+  with_items:
+    - apache2
+    - libapache2-mod-php7.0
+    - php7.0
+    - php7.0-zip
+    - php7.0-xml
+    - php7.0-mbstring
+    - php7.0-gd
+    - php7.0-curl 
+    - php7.0-mysql
+    - php7.0-ldap
+    - nfs-common
+
+- name: Ensure Apache modules are present and enabled
+  apache2_module: name={{ item }} state=present force=True
+  with_items:
+    - ssl
+    - rewrite
+    - headers
+    - env
+    - dir
+    - mime
+  notify: restart apache
+
+- name: Copie de la conf nextcloud.conf
+  template:
+    src: /etc/ansible/roles/apache/templates/nextcloud.conf
+    dest: /etc/apache2/sites-available/nextcloud.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Disable default-ssl
+  become: yes
+  become_method: sudo
+  command: a2dissite default-ssl
+
+- name: Disable 000-default
+  become: yes
+  become_method: sudo
+  command: a2dissite 000-default
+
+
+- name: Enable nextcloud on Apache
+  become: yes
+  become_method: sudo
+  command: a2ensite nextcloud.conf
+  notify: restart apache
+  
+- name: Create user dummy
+  become: yes
+  become_method: sudo
+  user:
+    name: dummy
+    shell: /sbin/nologin
+    state: present
+
+- name: set owner and group to www-data to nextcloud directory
+  file:
+    path: /var/www/html/nextcloud
+    owner: www-data
+#  group: www-data
+    state: directory
+    recurse: yes
+
+

@@ -1,0 +1,24 @@
+---
+
+- name: BaseDonnees
+  hosts: bdd
+  become: yes
+  become_method: sudo
+  roles:
+   - commun
+   - mysql
+
+- name: BaseDonneesMaster
+  hosts: bddmaster
+  become: yes
+  become_method: sudo
+  roles:
+   - bddmaster
+
+- name: BaseDonneesSlave
+  hosts: bddslave
+  become: yes
+  become_method: sudo
+  roles:
+   - bddslave
+

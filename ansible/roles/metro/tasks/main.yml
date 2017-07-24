@@ -1,0 +1,8 @@
+---
+
+- name: Install Graphite, Carbon, Grafana
+  apt: name={{item}} state=present
+  with_items:
+    - grafana
+    - graphite-carbon
+    - graphite-web

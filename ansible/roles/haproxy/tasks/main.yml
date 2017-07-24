@@ -1,0 +1,68 @@
+---
+
+- name: Installation paquet Keepalived
+  become: yes
+  become_method: sudo
+  apt:
+    name: keepalived
+    state: present
+
+
+- name: Conf Keepalived
+  template: 
+    src: /etc/ansible/roles/haproxy/templates/keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+  notify: restart keepalived
+
+
+- name: Service Keepalived
+  service:
+    name: keepalived
+    state: started
+
+
+
+
+- name: Installation paquet HAProxy
+  become: yes
+  become_method: sudo
+  apt:
+    name: haproxy
+    state: present
+
+  
+- name: Service haproxy
+  service:
+    name: haproxy
+    state: started
+
+
+- name: Modification conf /etc/haproxy/haproxy.cfg
+  blockinfile:
+    path: /etc/haproxy/haproxy.cfg
+    block: |
+      #---------------------------------------------------------------------
+      # main frontend which proxys to the backends
+      #---------------------------------------------------------------------
+      frontend http-in
+          bind *:80
+          default_backend serveurs_web
+      
+      # equivalent HTTPS
+      frontend https-in
+          bind *:443 ssl crt /etc/ssl/private/nextcloud.pem
+          reqadd X-Forwarded-Proto:\ https
+          default_backend serveurs_web
+      
+      #---------------------------------------------------------------------
+      # static backend for serving up images, stylesheets and such
+      #---------------------------------------------------------------------
+      backend serveurs_web
+          redirect scheme https if !{ ssl_fc } # SSL
+          cookie HACookie insert indirect
+          server      serveur1 192.168.200.20:80 maxconn 20 cookie cook1
+          server      serveur2 192.168.200.21:80 maxconn 20 cookie cook2
+
+- name: Restart HAProxy
+  service: name=haproxy state=restarted 
+

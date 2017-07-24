@@ -1,0 +1,67 @@
+---
+
+- name: Apache
+  hosts: web
+  become: yes
+  become_method: sudo
+  roles:
+   - commun
+   - apache 
+   - nextcloud
+
+
+- name: NFS
+  hosts: nfs
+  become: yes
+  become_method: sudo
+  roles:
+   - commun
+   - nfs
+
+- name: LDAP
+  hosts: ldap
+  become: yes
+  become_method: sudo
+  roles:
+   - commun
+   - ldap
+
+- name: BaseDonnees
+  hosts: bdd
+  become: yes
+  become_method: sudo
+  roles:
+   - commun
+
+- name: BaseDonneesMaster
+  hosts: bddmaster
+  become: yes
+  become_method: sudo
+  roles:
+   - bddmaster
+
+- name: BaseDonneesSlave
+  hosts: bddslave
+  become: yes
+  become_method: sudo
+  roles:
+   - bddslave
+
+- name: HaProxy
+  hosts: haproxy
+  become: yes
+  become_method: sudo
+  roles:
+   - commun
+   - haproxy
+
+- name: infra
+  hosts: infra
+  become: yes
+  become_method: sudo
+  roles:
+   - commun
+   - metro
+   - nagios
+
+

@@ -1,0 +1,7 @@
+---
+
+- name: restart nagios
+  become: yes
+  become_method: sudo
+  command: /etc/init.d/nagios restart
+

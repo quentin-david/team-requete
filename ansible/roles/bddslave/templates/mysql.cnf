@@ -1,0 +1,4 @@
+[mysqld]
+server-id=2
+replicate_ignore_db=mysql,performance_schema,information_schema,phpmyadmin,sys
+

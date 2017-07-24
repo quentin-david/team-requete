@@ -1,0 +1,64 @@
+---
+
+- name: Deploiement de la cle SSH
+  authorized_key:
+    user: administrateur
+    state: present
+    key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCer7mJUciGGVzMh3W00EaUje5F3QO/HUCGlFmsUqGL+7aXCuA6y3jS+OP2TDnDjjY9WrBVLC2iG5C3FJbgcR5uaN8ZdOErxaEO0+Vw0yQUp6SGHkwZsG5pQCIkkYVejyn1E6VojXCk+CO99k4mKRFYAxBlocu6Hp0QeW7T9nmuKYxy1Wsx3Zl2C1Q4MeMBmwq04S6Qg4/aayngPjV/Oi9s88SIIrEC0anUZmGm2CM9rJqjW1dEPNjO0ZkDuNfib5uTSmbtBPOLEnnrJlPmJvw+5smBD0vHgELFXUnPNglxehiApiLLucWr2bifYepc48+2UJ4UnyEHjuQoKBHPEc+1 root@serveur
+
+- apt_repository: repo={{ item }} state=present
+  with_items:
+    - deb [arch=amd64] http://10.189.250.120/fr.archive.ubuntu.com/ubuntu/ xenial-updates main universe multiverse restricted
+    - deb [arch=amd64] http://10.189.250.120/fr.archive.ubuntu.com/ubuntu/ xenial-security main universe multiverse restricted
+    - deb [arch=amd64] http://10.189.250.120/fr.archive.ubuntu.com/ubuntu/ xenial main universe multiverse restricted
+
+- name: Install misc packages
+  become: yes
+  become_method: sudo
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - vim
+
+#################   COLLECTD  ######################
+
+- name: Install CollectD
+  apt: name=collectd state=present
+
+- name: Change polling interval
+  lineinfile:
+    path: /etc/collectd/collectd.conf
+    regexp: '^#Interval 10'
+    line: 'Interval 60'
+
+- name: Conf collectd.conf.d/write_graphite.conf
+  template:
+    src: write_graphite.conf
+    dest: /etc/collectd/collectd.conf.d/write_graphite.conf
+  notify: restart collectd
+
+
+# Uniquement sur le collecteur CollectD (infra01)
+- name: Conf collectd.conf.d/network.conf
+  template:
+    src: network.conf
+    dest: /etc/collectd/collectd.conf.d/network.conf
+  notify: restart collectd
+  when: ansible_hostname == "infra01"
+
+
+##################   NAGIOS/NRPE  ######################
+
+- name: Install NRPE
+  apt: name={{item}} state=present
+  with_items:
+    - nagios-plugins
+    - nagios-nrpe-server
+
+- name: Edit /etc/nagios/nrpe.cfg
+  lineinfile:
+    path: /etc/nagios/nrpe.cfg
+    regexp: '^allowed_hosts=127.0.0.1'
+    line: 'allowed_hosts=127.0.0.1,192.168.200.15'
+  notify: restart nrpe
+
+

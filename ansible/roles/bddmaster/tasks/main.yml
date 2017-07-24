@@ -1,0 +1,24 @@
+- name: Copie de la conf mysql
+  template:
+    src: /etc/ansible/roles/bddmaster/templates/mysql.cnf
+    dest: /etc/mysql/conf.d/mysql.cnf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: restart mysql
+  service: name=mysql state=restarted
+
+- mysql_user:
+    name: replication
+    host: '%'
+    password: 12345
+    priv: "*.*:REPLICATION SLAVE"
+    state: present
+
+- mysql_user:
+    name: administrateur
+    host: '%'
+    password: ertyerty
+    priv: "*.*:ALL"
+    state: present

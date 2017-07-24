@@ -1,0 +1,46 @@
+---
+
+- name: Install NFS
+  become: yes
+  become_method: sudo
+  apt: name={{ item }} state=present
+  with_items:
+    - nfs-kernel-server
+
+
+- name: Create repertoire data Nextcloud
+  file:
+    path: /var/lib/nextcloud
+    owner: www-data
+    group: www-data
+    state: directory
+    recurse: yes
+
+
+- template:
+    src: /etc/ansible/roles/nfs/templates/exports
+    dest: /etc/exports
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Commande exportfs
+  become: yes
+  become_method: sudo
+  command: exportfs -a
+
+  
+- name: Create NFS user
+  become: yes
+  become_method: sudo
+  user:
+    name: www-data
+    uid: 33
+    groups: www-data
+    shell: /sbin/nologin
+    state: present
+
+- name: Demarrage du service NFS
+  service:
+    name: nfs-kernel-server
+    state: started

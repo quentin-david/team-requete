@@ -1,0 +1,11 @@
+---
+
+- name: infra
+  hosts: infra
+  become: yes
+  become_method: sudo
+  roles:
+   - commun
+   - metro
+   - nagios
+

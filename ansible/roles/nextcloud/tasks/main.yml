@@ -1,0 +1,94 @@
+---
+
+- name: Installation de paquet GIT
+  become: yes
+  become_method: sudo
+  apt:
+    name: git
+    state: present
+
+- name: Install Nextcloud appli
+  become: yes
+  become_method: sudo
+  git: 
+    repo: 'https://github.com/nextcloud/server.git' 
+    dest: /var/www/html/nextcloud
+    clone: yes
+    force: yes
+  environment:
+    http_proxy: http://10.154.61.3:3128
+    https_proxy: http://10.154.61.3:3128
+  notify: restart apache
+
+
+- name: Control NFS mount point
+  mount:
+    path: /var/www/html/nextcloud/data
+    src: "{{ nfs01_ip }}:/var/lib/nextcloud/"
+    fstype: nfs
+    state: mounted
+
+
+- name: check if /var/www/html/nextcloud/config/config.php exists
+  stat: path=/var/www/html/nextcloud/config/config.php
+  register: config_php_exists
+
+
+# Uniquement sur web02
+- name: config nextcloud config.php
+  template:
+    src: /etc/ansible/roles/nextcloud/templates/config.php.j2
+    dest: /var/www/html/nextcloud/config/config.php
+  when: ansible_hostname == "web02"
+
+
+# Uniquement si le fichier config.php n'existe pas deja
+# Uniquement sur le web01
+- name: Installation of Nextcloud
+  become: yes
+  become_method: sudo
+  become_user: www-data
+  command: php occ maintenance:install --database-name nextcloud --database-host "{{ bdd01_ip }}" --database-port 3306 --database-user nextcloud --database-pass nextCloud --admin-user nextcloud --admin-pass nextcloud
+  args:
+    chdir: /var/www/html/nextcloud/
+  when: config_php_exists.stat.exists == False and ansible_hostname == "web01"
+  register: delete_replace_config_php_now
+
+- name: Activation du module user_ldap
+  become: yes
+  become_method: sudo
+  become_user: www-data
+  command: php occ app:enable user_ldap
+  args:
+    chdir: /var/www/html/nextcloud/
+ 
+# Uniquement sur le web01 
+# Rajout du block 
+#- name: Modification conf /var/www/html/nextcloud/config/config.php
+#  blockinfile:
+#    path: /var/www/html/nextcloud/config/config.php
+#    insertafter: "0 => 'localhost',"
+#    content: |
+#      1 => '192.168.122.1',
+#      2 => '192.168.122.183',
+#      3 => '192.168.200.21',
+#      4 => '192.168.200.100',
+#  when: ansible_hostname == "web01"
+
+
+# Uniquement sur le web01, apres la premier installation
+# On supprime le config.php...
+- name: (premiere install) Suppression du config.php...
+  file:
+    path: /var/www/html/nextcloud/config/config.php
+    state: absent
+  when: ansible_hostname == "web01" and delete_replace_config_php_now.stdout != ""
+
+# ...et on le recree depuis le modele
+- name: (premiere install) ...remplacement par le modele config.php
+  template:
+    src: /etc/ansible/roles/nextcloud/templates/config.php.j2
+    dest: /var/www/html/nextcloud/config/config.php
+  when: ansible_hostname == "web01" and delete_replace_config_php_now.stdout != "" 
+ 
+

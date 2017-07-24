@@ -1,0 +1,2 @@
+/var/lib/nextcloud/	{{ web01_ip }}(rw,sync,no_root_squash,no_subtree_check)
+/var/lib/nextcloud/	{{ web02_ip }}(rw,sync,no_root_squash,no_subtree_check)

@@ -1,0 +1,6 @@
+[mysqld]
+server-id=1
+log-bin=mysql-bin
+log-error=mysql-bin.err
+binlog_ignore_db=mysql,performance_schema,information_schema,phpmyadmin,sys
+

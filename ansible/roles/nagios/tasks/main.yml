@@ -1,0 +1,28 @@
+---
+
+- name: Mise en place clients
+  template:
+    src: client.cfg.j2
+    dest: "/usr/local/nagios/etc/servers/{{item.host}}.cfg"
+  with_items:
+    - host: deploiement
+      ip: 192.168.200.10
+    - host: ldap01
+      ip: 192.168.200.12
+    - host: infra01
+      ip: 192.168.200.15
+    - host: web01
+      ip: 192.168.200.20
+    - host: web02
+      ip: 192.168.200.21
+    - host: bdd01
+      ip: 192.168.200.30
+    - host: bdd02
+      ip: 192.168.200.31
+    - host: haproxy01
+      ip: 192.168.200.40
+    - host: haproxy02
+      ip: 192.168.200.41
+    - host: nfs01
+      ip: 192.168.200.50
+  notify: restart nagios

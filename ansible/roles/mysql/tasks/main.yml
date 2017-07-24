@@ -1,0 +1,35 @@
+---
+
+- name: Installation du serveur de bdd
+  apt: name={{ item }} state=present
+  with_items:
+    - python3-mysqldb
+    - mysql-server
+    - mysql-client
+
+- mysql_user:
+    name: administrateur
+    password: ertyerty
+    priv: '*.*:ALL'
+    state: present
+
+- name: Creation base nextCloud
+  mysql_db:
+    name: nextcloud
+    state: present
+
+- mysql_user:
+    name: nextcloud
+    password: nextCloud
+    host: '%'
+    priv: '*.*:USAGE/nextcloud.*:ALL'
+    state: present
+
+- lineinfile:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: '^bind-address'
+    state: absent
+
+- name: restart mysql
+  service: name=mysql state=restarted
+

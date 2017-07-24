@@ -1,0 +1,23 @@
+- name: Copie de la conf mysql
+  template:
+    src: /etc/ansible/roles/bddslave/templates/mysql.cnf
+    dest: /etc/mysql/conf.d/mysql.cnf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: restart mysql
+  service: name=mysql state=restarted
+
+- copy:
+    src: /etc/ansible/roles/bddslave/init_replication_mysql.sh
+    dest: /home/administrateur
+    owner: root
+    group: root
+    mode: 0777
+
+- name: Initialisation de la réplication
+  command: /home/administrateur/init_replication_mysql.sh >> /home/administrateur/log_replication.txt
+  args:
+    chdir: /home/administrateur
+

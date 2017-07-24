@@ -1,0 +1,37 @@
+---
+
+- name: Installation paquets LDAP
+  apt: name={{ item }} state=present
+  with_items:
+    - slapd
+    - ldap-utils
+    - python-ldap3
+    - libsasl2-dev
+    - libldap2-dev
+    - python-dev
+    - libssl-dev
+    - python-pip
+
+#- name: Ajout classe racine utilisateurs Nextcloud
+#  ldap_entry:
+#    dn: ou=users,dc=nextcloud,dc=dgfip
+#    objectClass: organizationalUnit
+
+
+- name: Ajout utilisateurs Nextcloud
+  ldap_entry:
+    server_uri: ldap://192.168.200.12/
+    bind_dn: cn=admin,dc=nextcloud,dc=dgfip
+    bind_pw: ertyerty
+    dn: "cn={{item}},ou=users,dc=nextcloud,dc=dgfip"
+    objectClass:
+      - inetOrgPerson
+    attributes:
+      description: "User {{ item }}"
+      userPassword: "{{ item }}"
+      uid: "{{ item }}"
+      sn: "{{ item }}"
+  with_items:
+    - quentin
+    - jc
+    - edouard

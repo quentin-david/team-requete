@@ -1,0 +1,9 @@
+---
+
+- name: HaProxy
+  hosts: haproxy
+  become: yes
+  become_method: sudo
+  roles:
+   - commun
+   - haproxy
