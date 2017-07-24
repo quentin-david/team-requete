@@ -42,7 +42,7 @@ args = parser.parse_args()
   Description des machines
 """
 class Machine:
-	definition_roles = {'web-p': 'Web primaire', 'web-s': 'Web secondaire', 'bdd-p': 'BDD primaire', 'bdd-b': 'BDD backup', 'ha-p': 'HAProxy primaire', 'ha-s': 'HAProxy secondaire', 'ldap-p': 'LDAP primaire', 'ldap-b': 'LDAP backup', 'nfs-p': 'NFS primaire'}
+	definition_roles = {'web-p': 'Web primaire', 'web-s': 'Web secondaire', 'bdd-p': 'BDD primaire', 'bdd-b': 'BDD backup', 'ha-p': 'HAProxy primaire', 'ha-s': 'HAProxy secondaire', 'ldap-p': 'LDAP primaire', 'ldap-b': 'LDAP backup', 'nfs-p': 'NFS primaire', 'infra-p': 'Serveur infra'}
 	
 	def __init__(self, name, ip, hyperviseur, role='small',disk=20,profil='small',plateforme=None, bridge=None):
 		self.name = name
@@ -189,7 +189,7 @@ class Machine:
  Description de la plateforme depuis un fichier YAML
 """
 class Plateforme:
-	definition_roles = {'web-p': 'Web primaire', 'web-s': 'Web secondaire', 'bdd-p': 'BDD primaire', 'bdd-b': 'BDD backup', 'ha-p': 'HAProxy primaire', 'ha-s': 'HAProxy secondaire', 'ldap-p': 'LDAP primaire', 'ldap-b': 'LDAP backup', 'nfs-p': 'NFS primaire'}
+	definition_roles = {'web-p': 'Web primaire', 'web-s': 'Web secondaire', 'bdd-p': 'BDD primaire', 'bdd-b': 'BDD backup', 'ha-p': 'HAProxy primaire', 'ha-s': 'HAProxy secondaire', 'ldap-p': 'LDAP primaire', 'ldap-b': 'LDAP backup', 'nfs-p': 'NFS primaire', 'infra-p': 'Serveur infra'}
 	
 	def __init__(self,config_file):
 		if os.path.isfile(config_file):

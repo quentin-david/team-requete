@@ -77,3 +77,12 @@ liste_machines:
     disk: '70'
     hyperviseur: '192.168.122.1'
     bridge: 'usb-BFAE53'
+  
+  - name: 'infra01'
+    role: 'infra-p'
+    ip: '192.168.200.15'
+    profil: 'large'
+    disk: '70'
+    hyperviseur: '192.168.122.1'
+    bridge: 'usb-BFAE53'
+
